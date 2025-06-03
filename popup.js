@@ -49,10 +49,6 @@ function updateResult(content) {
         content = content
             // Convert numbered lists to bullet points
             .replace(/^\s*\d+\.\s+/gm, '• ')
-            // Convert dash and asterisk to bullet points
-            .replace(/^[-*]\s+/gm, '• ')
-            // Ensure consistent bullet point spacing
-            .replace(/^•\s+/gm, '• ')
             // Fix multiple newlines
             .replace(/\n\s*\n/g, '\n')
             // Remove empty lines at the start
@@ -66,10 +62,10 @@ function updateResult(content) {
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             // Handle italic text
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            // Handle bullet points
-            .replace(/^•\s+(.*?)$/gm, '<li>$1</li>')
-            // Wrap consecutive list items in ul
-            .replace(/(<li>.*?<\/li>)(?:\n<li>.*?<\/li>)*/g, '<ul>$&</ul>')
+            // Handle bullet points (• or *)
+            .replace(/^(?:•|\*)\s+(.*?)$/gm, '<li>$1</li>')
+            // Group consecutive <li> into <ul>
+            .replace(/(<li>.*?<\/li>\n?)+/g, match => `<ul>${match.replace(/\n/g, '')}</ul>`)
             // Handle line breaks
             .replace(/\n/g, '<br>');
 
