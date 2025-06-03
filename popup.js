@@ -1,5 +1,8 @@
-// Import config
-import config from './config.js';
+// Track last request mode
+let lastRequestMode = '';
+
+// Configuration
+const GEMINI_API_KEY = 'AIzaSyDIHHQhEV7mrz9W5nL_ZOoI-q5S0dXyP9I';
 
 // DOM elements
 const menuPage = document.getElementById('menuPage');
@@ -32,25 +35,6 @@ function updateStatus(message) {
     statusEl.style.display = message ? 'block' : 'none';
     statusEl.style.margin = '0';
     statusEl.style.padding = '0';
-}
-
-// Function to show typewriter effect
-function typeWriter(text, element, speed = 30) {
-    let i = 0;
-    element.innerHTML = '';
-    element.classList.add('typewriter');
-
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        } else {
-            element.classList.remove('typewriter');
-        }
-    }
-
-    type();
 }
 
 // Function to update result with markdown support and typewriter effect
@@ -111,7 +95,7 @@ async function getExplanation(text, isDetailed = false) {
         if (text.type === 'word') {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle answers.
                 Clue ${text.clueNumber}: "${text.clue}"
-                The answer is ${text.wordLength} letters long.
+                The answer MUST be exactly ${text.wordLength} letters long.
                 ${knownChars ? `Known characters: ${knownChars}` : ''}
                 ${fullWord ? `Full word: ${fullWord}` : ''}
 
@@ -123,7 +107,8 @@ async function getExplanation(text, isDetailed = false) {
                 4. Cultural or historical significance
                 5. Any interesting facts about the word`
                     :
-                    `Please provide the most likely answer word, a brief definition of this word, why this word fits the clue`}`;
+                    `Please provide the most likely answer word, a brief definition of this word, why this word fits the clue.
+                    Remember: The answer MUST be exactly ${text.wordLength} letters long.`}`;
         } else {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle clues.
 
@@ -147,7 +132,7 @@ async function getExplanation(text, isDetailed = false) {
                 DO NOT provide the actual answer. Keep your explanation brief, focused, and helpful for a crossword solver who is stuck on this clue.`}`;
         }
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${config.GEMINI_API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
