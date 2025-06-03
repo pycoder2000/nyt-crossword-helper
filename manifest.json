@@ -1,32 +1,39 @@
 {
-  "manifest_version": 3,
-  "name": "NYT Crossword Helper",
-  "version": "1.0",
-  "description": "AI-powered hints and explanations for NYT crossword puzzles",
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "https://www.nytimes.com/*"
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+    "manifest_version": 3,
+    "name": "NYT Crossword Helper",
+    "version": "1.0",
+    "description": "AI-powered hints and explanations for NYT crossword puzzles",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://www.nytimes.com/*",
+        "https://word.tips/*"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.nytimes.com/crosswords/game/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
     }
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://www.nytimes.com/crosswords/game/*"
-      ],
-      "js": ["content.js"]
-    }
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  }
 }

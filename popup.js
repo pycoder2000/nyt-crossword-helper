@@ -80,6 +80,26 @@ function updateResult(content) {
     }
 }
 
+// Function to get answer from word.tips
+async function getWordTipsAnswer(clue, wordLength) {
+    try {
+        const response = await chrome.runtime.sendMessage({
+            action: 'getWordTipsAnswer',
+            clue,
+            wordLength
+        });
+
+        if (!response.success) {
+            throw new Error(response.error);
+        }
+
+        return response.answer;
+    } catch (error) {
+        console.error('Error getting answer from word.tips:', error);
+        throw error;
+    }
+}
+
 // Function to check if URL is NYT Crossword
 function isNYTCrosswordURL(url) {
     return url.match(/^https:\/\/www\.nytimes\.com\/crosswords\/game\/(daily|mini)\/\d{4}\/\d{2}\/\d{2}$/);
@@ -94,8 +114,8 @@ async function getExplanation(text, isDetailed = false) {
 
         if (text.type === 'word') {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle answers.
-                Clue ${text.clueNumber}: "${text.clue}"
-                The answer MUST be exactly ${text.wordLength} letters long.
+                Clue ${text.clueNumber || ''}: "${text.clue}"
+                The answer is: ${text.answer}
                 ${knownChars ? `Known characters: ${knownChars}` : ''}
                 ${fullWord ? `Full word: ${fullWord}` : ''}
 
@@ -107,8 +127,10 @@ async function getExplanation(text, isDetailed = false) {
                 4. Cultural or historical significance
                 5. Any interesting facts about the word`
                     :
-                    `Please provide the most likely answer word, a brief definition of this word, why this word fits the clue.
-                    Remember: The answer MUST be exactly ${text.wordLength} letters long.`}`;
+                    `Please explain:
+                1. Why this word fits the clue
+                2. A brief definition of this word
+                3. How it relates to the clue's context`}`;
         } else {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle clues.
 
@@ -234,12 +256,46 @@ async function handleContentRequest(mode) {
         updateStatus(`Getting explanation...`);
         showLoading();
 
-        // Get explanation from Gemini
-        const explanation = await getExplanation(response);
+        let answer;
+        try {
+            // Try to get answer from word.tips first
+            if (mode === 'word') {
+                answer = await getWordTipsAnswer(response.clue, response.wordLength);
+                // Get explanation from Gemini
+                const explanation = await getExplanation({
+                    type: 'word',
+                    clue: response.clue,
+                    wordLength: response.wordLength,
+                    answer: answer
+                });
+                updateResult(`Answer: ${answer}\n\n${explanation}`);
+            } else {
+                // For clues, still use Gemini
+                const explanation = await getExplanation(response);
+                updateResult(explanation);
+            }
+        } catch (error) {
+            console.error('Error getting answer:', error);
+            // Fallback to Gemini if word.tips fails
+            const explanation = await getExplanation(response);
+            const warningHtml = `
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-2 mb-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-2">
+                            <p class="text-xs text-yellow-700">Answer not found on word.tips. This answer was generated using Gemini.</p>
+                        </div>
+                    </div>
+                </div>`;
+            updateResult(`${warningHtml}${explanation}`);
+        }
 
         hideLoading();
         updateStatus(''); // Clear the status message
-        updateResult(explanation);
         // Only show More Info button for word answers
         moreInfoBtn.style.display = mode === 'word' ? 'block' : 'none';
 
