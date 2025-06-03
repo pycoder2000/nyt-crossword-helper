@@ -1,5 +1,5 @@
-// Configuration
-const GEMINI_API_KEY = 'AIzaSyA6Kr_s-e1uWx4D9Cex8k0iDnyuNUi_L2E'; // You'll need to add your Gemini API key here
+// Import config
+import config from './config.js';
 
 // DOM elements
 const menuPage = document.getElementById('menuPage');
@@ -147,7 +147,7 @@ async function getExplanation(text, isDetailed = false) {
                 DO NOT provide the actual answer. Keep your explanation brief, focused, and helpful for a crossword solver who is stuck on this clue.`}`;
         }
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${config.GEMINI_API_KEY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

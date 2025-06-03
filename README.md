@@ -14,14 +14,19 @@ A Chrome extension that provides AI-powered hints and explanations for New York 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/nyt-crossword-helper.git
+git clone git@github.com:pycoder2000/nyt-crossword-helper.git
 ```
 
-2. Open Chrome and go to `chrome://extensions/`
+2. Set up your Gemini API key:
+   - Copy `config.template.js` to `config.js`
+   - Replace `YOUR_API_KEY_HERE` in `config.js` with your Gemini API key
+   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
-3. Enable "Developer mode" in the top right
+3. Open Chrome and go to `chrome://extensions/`
 
-4. Click "Load unpacked" and select the `nyt-crossword-helper` directory
+4. Enable "Developer mode" in the top right
+
+5. Click "Load unpacked" and select the `nyt-crossword-helper` directory
 
 ## Usage
 
@@ -42,6 +47,7 @@ git clone https://github.com/yourusername/nyt-crossword-helper.git
 
 - Chrome browser
 - Basic knowledge of JavaScript and Chrome extension development
+- Gemini API key from Google AI Studio
 
 ### Project Structure
 
@@ -52,15 +58,18 @@ nyt-crossword-helper/
 ├── popup.js          # Popup functionality
 ├── content.js        # Content script for NYT crossword page
 ├── styles.css        # Styling for the extension
+├── config.js         # API key configuration (gitignored)
+├── config.template.js # Template for config.js
 └── README.md         # This file
 ```
 
 ### Setup Development Environment
 
 1. Clone the repository
-2. Make your changes
-3. Load the extension in Chrome using Developer mode
-4. Test your changes
+2. Set up your API key in `config.js`
+3. Make your changes
+4. Load the extension in Chrome using Developer mode
+5. Test your changes
 
 ## Contributing
 
@@ -84,6 +93,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
-
-Project Link: [https://github.com/yourusername/nyt-crossword-helper](https://github.com/yourusername/nyt-crossword-helper)
+Parth Desai - [@\_ParthDesai\_](https://x.com/_ParthDesai_)

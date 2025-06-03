@@ -2,13 +2,13 @@
   "manifest_version": 3,
   "name": "NYT Crossword Helper",
   "version": "1.0",
-  "description": "Get explanations for NYT Crossword clues and answers",
+  "description": "AI-powered hints and explanations for NYT crossword puzzles",
   "permissions": [
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
-    "https://www.nytimes.com/crosswords/game/*"
+    "https://www.nytimes.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -25,5 +25,8 @@
       ],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }
