@@ -35,7 +35,7 @@ function updateStatus(message) {
     statusEl.style.padding = '0';
 }
 
-// Function to update result with markdown support and typewriter effect
+// Function to update result with markdown support
 function updateResult(content) {
     try {
         if (!content) {
@@ -45,8 +45,6 @@ function updateResult(content) {
 
         // Pre-process the content to clean up formatting
         content = content
-            // Convert numbered lists to bullet points
-            .replace(/^\s*\d+\.\s+/gm, '• ')
             // Fix multiple newlines
             .replace(/\n\s*\n/g, '\n')
             // Remove empty lines at the start
@@ -54,18 +52,12 @@ function updateResult(content) {
             // Remove empty lines at the end
             .replace(/\n+$/, '');
 
-        // Convert markdown to HTML
-        let html = content
-            // Handle bold text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            // Handle italic text
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            // Handle bullet points (• or *)
-            .replace(/^(?:•|\*)\s+(.*?)$/gm, '<li>$1</li>')
-            // Group consecutive <li> into <ul>
-            .replace(/(<li>.*?<\/li>\n?)+/g, match => `<ul>${match.replace(/\n/g, '')}</ul>`)
-            // Handle line breaks
-            .replace(/\n/g, '<br>');
+        // Use marked to convert markdown to HTML
+        const html = marked.parse(content, {
+            breaks: true,  // Convert line breaks to <br>
+            gfm: true,     // Use GitHub Flavored Markdown
+            headerIds: false // Disable header IDs for cleaner output
+        });
 
         resultEl.innerHTML = html;
     } catch (error) {
@@ -314,19 +306,33 @@ async function handleMoreInfo() {
             return;
         }
 
-        updateStatus('Getting detailed explanation...');
+        updateStatus('Getting detailed information...');
         showLoading();
         moreInfoBtn.style.display = 'none';
 
-        const detailedExplanation = await getExplanation(response, true);
+        let detailedInfo = '';
+        try {
+            // First try to get detailed info from word.tips
+            const wordTipsAnswer = await getWordTipsAnswer(response.clue, response.wordLength);
+            if (wordTipsAnswer) {
+                detailedInfo = `Word.tips Answer: ${wordTipsAnswer}\n\n`;
+            }
+        } catch (error) {
+            console.log('Word.tips not available, falling back to Gemini');
+        }
+
+        // Always get detailed explanation from Gemini
+        const geminiExplanation = await getExplanation(response, true);
+        detailedInfo += geminiExplanation;
+
         hideLoading();
         updateStatus('');
-        updateResult(detailedExplanation);
+        updateResult(detailedInfo);
         moreInfoBtn.style.display = 'block';
 
     } catch (error) {
         console.error('Error in handleMoreInfo:', error);
-        updateStatus('Error getting detailed explanation');
+        updateStatus('Error getting detailed information');
         hideLoading();
         moreInfoBtn.style.display = 'block';
     }

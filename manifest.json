@@ -33,6 +33,16 @@
             ]
         }
     ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "marked.min.js"
+            ],
+            "matches": [
+                "https://www.nytimes.com/*"
+            ]
+        }
+    ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     }
