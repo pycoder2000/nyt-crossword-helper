@@ -3,18 +3,22 @@
 <head>
   <title>NYT Crossword Helper</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <!-- Main Menu Page -->
     <div id="menuPage" class="page">
-      <div class="input-group">
-        <input type="text" id="knownChars" placeholder="Enter known characters (e.g., A_E_)" class="text-input">
-        <input type="text" id="fullWord" placeholder="Enter full word (if known)" class="text-input">
-      </div>
       <div class="button-group">
-        <button id="clueBtn" class="action-btn">Clue Hint</button>
-        <button id="wordBtn" class="action-btn">Get Answer</button>
+        <button id="clueBtn" class="action-btn retro-btn">
+          <span class="btn-label">Need a Hint?</span>
+          <span class="btn-icon handwritten" id="hintIcon" aria-hidden="true"></span>
+        </button>
+        <button id="wordBtn" class="action-btn retro-btn">
+          <span class="btn-label">Reveal the Answer</span>
+          <span class="btn-icon handwritten" id="answerIcon" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
 

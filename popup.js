@@ -13,8 +13,6 @@ const loadingEl = document.getElementById('loading');
 const clueBtn = document.getElementById('clueBtn');
 const wordBtn = document.getElementById('wordBtn');
 const backBtn = document.getElementById('backBtn');
-const knownCharsInput = document.getElementById('knownChars');
-const fullWordInput = document.getElementById('fullWord');
 const moreInfoBtn = document.getElementById('moreInfoBtn');
 
 // Function to show loading state
@@ -105,15 +103,11 @@ function isNYTCrosswordURL(url) {
 async function getExplanation(text, isDetailed = false) {
     try {
         let prompt = '';
-        const knownChars = knownCharsInput.value.trim();
-        const fullWord = fullWordInput.value.trim();
 
         if (text.type === 'word') {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle answers.
                 Clue ${text.clueNumber || ''}: "${text.clue}"
                 The answer is: ${text.answer}
-                ${knownChars ? `Known characters: ${knownChars}` : ''}
-                ${fullWord ? `Full word: ${fullWord}` : ''}
 
                 ${isDetailed ?
                     `Please provide a detailed explanation including:
@@ -131,8 +125,6 @@ async function getExplanation(text, isDetailed = false) {
             prompt = `You are a helpful assistant that explains New York Times crossword puzzle clues.
 
                 Clue: "${text.text}"
-                ${knownChars ? `Known characters: ${knownChars}` : ''}
-                ${fullWord ? `Full word: ${fullWord}` : ''}
 
                 ${isDetailed ?
                     `Please provide a detailed analysis including:
@@ -364,3 +356,19 @@ moreInfoBtn.addEventListener('click', handleMoreInfo);
 
 // Initialize when popup opens
 initializePopup();
+
+document.getElementById('clueBtn').addEventListener('mouseenter', () => {
+    document.getElementById('hintIcon').textContent = '✏️';
+});
+
+document.getElementById('clueBtn').addEventListener('mouseleave', () => {
+    document.getElementById('hintIcon').textContent = '';
+});
+
+document.getElementById('wordBtn').addEventListener('mouseenter', () => {
+    document.getElementById('answerIcon').textContent = '🤫';
+});
+
+document.getElementById('wordBtn').addEventListener('mouseleave', () => {
+    document.getElementById('answerIcon').textContent = '';
+});

@@ -37,8 +37,6 @@ git clone git@github.com:pycoder2000/nyt-crossword-helper.git
    - "Clue Hint" for an explanation of the clue
    - "Get Answer" for the word and its explanation
 5. For answers, you can:
-   - Enter known characters (e.g., "A_E_")
-   - Enter the full word
    - Click "More Info" for detailed word information
 
 ## Development
